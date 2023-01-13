@@ -6,10 +6,10 @@ const cors = require('cors');
 app.use(cors());
 const bodyParser = require('body-parser');
 app.use(express.json());
-
+require('dotenv').config()
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect("mongodb+srv://Awaish17:LearnArabic@cluster0.catxjsk.mongodb.net/?retryWrites=true&w=majority")
+mongoose.connect(process.env.DB_CONNECT)
 
 
 app.post("/api/createPerson", async (req, res) => {
