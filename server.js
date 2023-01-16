@@ -13,40 +13,60 @@ mongoose.connect(process.env.DB_CONNECT)
 
 
 app.post("/api/createPerson", async (req, res) => {
-    await Person.create({
-        uid: req.body.uid,
-        name: req.body.personName,
-        connections: []
-     })
-     res.status(201).send({status: "ok"})
+    try{
+        await Person.create({
+            uid: req.body.uid,
+            name: req.body.personName,
+            connections: []
+         })
+         res.status(201).send({status: "ok"})
+    }catch(err){
+        res.status(500).send({message: err.message})
+    }
+    
 })
 
 app.post("/api/addConnection", async (req, res) => {
-    const personOne = await Person.findOne({uid: req.body.uidOne})
-    const personTwo = await Person.findOne({uid: req.body.uidTwo})
-    personOne.connections.push(personTwo.uid)
-    personTwo.connections.push(personOne.uid)
-    personOne.save()
-    personTwo.save()
-    res.status(201).send({status: "ok"})
+    try{
+        const personOne = await Person.findOne({uid: req.body.uidOne})
+        const personTwo = await Person.findOne({uid: req.body.uidTwo})
+        personOne.connections.push(personTwo.uid)
+        personTwo.connections.push(personOne.uid)
+        personOne.save()
+        personTwo.save()
+        res.status(201).send({status: "ok"})
+    }catch(err){
+        res.status(500).send({message: err.message})
+    }
+    
 })
 
 app.delete("/api/deleteAllPeople", async (req, res) => {
-    await Person.deleteMany()
-    res.status(202).send({status: "ok"})
+    try{
+        await Person.deleteMany()
+        res.status(202).send({status: "ok"})
+    }catch(err){
+        res.status(500).send({message: err.message})
+    }
+    
 })
 
 app.get("/api/getAllPeople", async (req, res) => {
-    const allpeople = await Person.find()
-    const allPeople = []
-    allpeople.forEach(person => {
-        allPeople.push({
-            id: person.uid,
-            name: person.name,
-            connections: person.connections
-        })
-    }) 
-    res.status(200).send({allPeople: allPeople})
+    try{
+        const allpeople = await Person.find()
+        const allPeople = []
+        allpeople.forEach(person => {
+            allPeople.push({
+                id: person.uid,
+                name: person.name,
+                connections: person.connections
+            })
+        }) 
+        res.status(200).send({allPeople: allPeople})
+    }catch(err){
+        res.status(500).send({message: err.message})   
+    }
+   
 })
 
 app.listen("3001", () => {
